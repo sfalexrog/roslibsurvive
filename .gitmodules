@@ -1,0 +1,3 @@
+[submodule "vendor/libsurvive"]
+	path = vendor/libsurvive
+	url = https://github.com/cnlohr/libsurvive.git
