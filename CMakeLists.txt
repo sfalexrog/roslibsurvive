@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   tf2
+  tf2_ros
 )
 
 ## System dependencies are found with CMake's conventions
@@ -136,6 +137,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/roslibsurvive_node.cpp)
+add_executable(${PROJECT_NAME}_frame_publisher src/vive_frame_publisher.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -151,6 +153,23 @@ include_directories(
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
+
+target_link_libraries(${PROJECT_NAME}_frame_publisher PUBLIC
+        survive
+        ${PLUGINS}
+        ${catkin_LIBRARIES}
+        )
+
+# libsurvive does not expose its includes, so we have to resort to dirty hacks
+
+target_include_directories(${PROJECT_NAME}_frame_publisher PUBLIC
+        vendor/libsurvive/include
+        vendor/libsurvive/redist
+        )
+
+target_compile_features(${PROJECT_NAME}_frame_publisher PUBLIC
+        cxx_std_11
+        )
 
 #############
 ## Install ##
@@ -172,6 +191,12 @@ include_directories(
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
+
+install(TARGETS ${PLUGINS} ${PROJECT_NAME}_frame_publisher
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  )
 
 ## Mark cpp header files for installation
 # install(DIRECTORY include/${PROJECT_NAME}/
