@@ -2,7 +2,8 @@
 #include <ros/ros.h>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_broadcaster.h>
-#include "../vendor/libsurvive/redist/linmath.h"
+#include <geometry_msgs/PoseStamped.h>
+#include <unordered_map>
 
 int main(int argc, char** argv)
 {
@@ -10,10 +11,27 @@ int main(int argc, char** argv)
 	SurviveSimpleContext *ctx = survive_simple_init(argc, argv);
 
 	ros::NodeHandle nh;
+	std::unordered_map<std::string, ros::Publisher> pubTopics;
 
 	tf2_ros::TransformBroadcaster br;
 
+	std::string baseFrameId = "map"; // TODO: pass base frame ID as a parameter
+
 	survive_simple_start_thread(ctx);
+
+	auto getPublisher = [&](const char *name) -> ros::Publisher& {
+		std::string sName = name;
+		auto it = pubTopics.find(sName);
+		if (it != pubTopics.end()) {
+			return it->second;
+		}
+
+		ROS_INFO("Adding publisher for for %s", name);
+		// Latch poses for lighthouses
+		bool isLighthouse = (sName.find("LH") != std::string::npos);
+		pubTopics[sName] = nh.advertise<geometry_msgs::PoseStamped>(sName + "_pose", 1, isLighthouse);
+		return pubTopics[sName];
+	};
 
 	while(survive_simple_is_running(ctx) && ros::ok())
 	{
@@ -26,7 +44,7 @@ int main(int argc, char** argv)
 
 			uint32_t timestamp = survive_simple_object_get_latest_pose(it, &pose);
 
-			transform.header.frame_id = "map"; // TODO: set name as a parameter
+			transform.header.frame_id = baseFrameId;
 			transform.child_frame_id = name;
 
 			transform.transform.translation.x = pose.Pos[0];
@@ -39,6 +57,19 @@ int main(int argc, char** argv)
 			transform.transform.rotation.z = pose.Rot[3];
 
 			br.sendTransform(transform);
+
+			geometry_msgs::PoseStamped poseMsg;
+			poseMsg.header.frame_id = baseFrameId;
+			poseMsg.pose.position.x = pose.Pos[0];
+			poseMsg.pose.position.y = pose.Pos[1];
+			poseMsg.pose.position.z = pose.Pos[2];
+
+			poseMsg.pose.orientation.w = pose.Rot[0];
+			poseMsg.pose.orientation.x = pose.Rot[1];
+			poseMsg.pose.orientation.y = pose.Rot[2];
+			poseMsg.pose.orientation.z = pose.Rot[3];
+
+			getPublisher(name).publish(poseMsg);
 		}
 
 		ros::spinOnce();
