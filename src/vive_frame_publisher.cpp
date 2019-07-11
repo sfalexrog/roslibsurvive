@@ -45,6 +45,7 @@ int main(int argc, char** argv)
 			uint32_t timestamp = survive_simple_object_get_latest_pose(it, &pose);
 
 			transform.header.frame_id = baseFrameId;
+			transform.header.stamp = ros::Time::now();
 			transform.child_frame_id = name;
 
 			transform.transform.translation.x = pose.Pos[0];
