@@ -155,21 +155,22 @@ add_executable(${PROJECT_NAME}_frame_publisher src/vive_frame_publisher.cpp)
 # )
 
 target_link_libraries(${PROJECT_NAME}_frame_publisher PUBLIC
-        survive
-        ${PLUGINS}
-        ${catkin_LIBRARIES}
-        )
+  survive
+  ${PLUGINS}
+  ${catkin_LIBRARIES}
+  )
 
 # libsurvive does not expose its includes, so we have to resort to dirty hacks
 
 target_include_directories(${PROJECT_NAME}_frame_publisher PUBLIC
-        vendor/libsurvive/include
-        vendor/libsurvive/redist
-        )
+  vendor/libsurvive/include
+  vendor/libsurvive/redist
+  )
 
 target_compile_features(${PROJECT_NAME}_frame_publisher PUBLIC
-        cxx_std_11
-        )
+  cxx_auto_type
+  cxx_lambdas
+  )
 
 #############
 ## Install ##
@@ -211,6 +212,10 @@ install(TARGETS ${PLUGINS} ${PROJECT_NAME}_frame_publisher
 #   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
+
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+  )
 
 #############
 ## Testing ##
