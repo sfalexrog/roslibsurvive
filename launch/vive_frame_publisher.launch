@@ -3,7 +3,7 @@
 
     <!-- Static transform for vive tracker -->
     <!-- Change T20 to actual tracker name -->
-    <node pkg="tf2_ros" type="static_transform_publisher" name="vive_frame" args="0.0 0.0 0.0 1.5707963 0.0 0.0 T20 T20_body">
+    <node pkg="tf2_ros" type="static_transform_publisher" name="vive_frame" args="0.0 0.0 0.0 1.5707963 0.0 0.0 T20 T20_body"/>
 
     <node name="vpe_publisher" pkg="clever" type="vpe_publisher" clear_params="true">
         <!-- Change this to actual topic name -->
