@@ -2,6 +2,7 @@
 #include <ros/ros.h>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <unordered_map>
 #include <tf2/LinearMath/Quaternion.h>
@@ -9,7 +10,7 @@
 #include <tf2_ros/static_transform_broadcaster.h>
 #include <geometry_msgs/TransformStamped.h>
 
-std::string baseFrameId;
+std::string base_frame_id, vive_frame_id;
 double yaw, pitch, roll, yaw2, pitch2, roll2, yaw_static, pitch_static, roll_static;
 
 int main(int argc, char** argv)
@@ -18,7 +19,8 @@ int main(int argc, char** argv)
 	SurviveSimpleContext *ctx = survive_simple_init(argc, argv);
 
 	ros::NodeHandle nh("~");
-	nh.param<std::string>("base_frame_id", baseFrameId, "map");
+	nh.param<std::string>("base_frame_id", base_frame_id, "map");
+	nh.param<std::string>("vive_frame_id", vive_frame_id, "vive_detected");
 	nh.param<double>("yaw", yaw, 0.0);
 	nh.param<double>("pitch", pitch, 0.0);
 	nh.param<double>("roll", roll, 0.0);
@@ -35,15 +37,17 @@ int main(int argc, char** argv)
 	geometry_msgs::PoseStamped poseMsg;
 	static tf2_ros::StaticTransformBroadcaster static_broadcaster;
     geometry_msgs::TransformStamped static_transformStamped;
+	tf2_ros::Buffer tf_buffer;
+    tf2_ros::TransformListener tf_Listener(tf_buffer);
 
-	//std::string baseFrameId = "base_link"; // TODO: pass base frame ID as a parameter
+	//std::string base_frame_id = "base_link"; // TODO: pass base frame ID as a parameter
 
 	survive_simple_start_thread(ctx);
 
     tf2::Quaternion q_orig, q_rot, q_rot2, q_new, q_static;
 	ros::Publisher T20_t1 = nh.advertise<geometry_msgs::PoseStamped>("T20_pose_t1", 1);
 	ros::Publisher T20_t2 = nh.advertise<geometry_msgs::PoseStamped>("T20_pose_t2", 1);
-	ros::Rate pub_rate(30);
+	geometry_msgs::TransformStamped transform, vive_transform;
 
 	auto getPublisher = [&](const char *name) -> ros::Publisher& {
 		std::string sName = name;
@@ -70,7 +74,6 @@ int main(int argc, char** argv)
 			const char *name = survive_simple_object_name(it);
 			std::string str_name = name;
 			std::string t20_name = "T20";
-			geometry_msgs::TransformStamped transform;
 
 			uint32_t timestamp = survive_simple_object_get_latest_pose(it, &pose);
 
@@ -78,13 +81,13 @@ int main(int argc, char** argv)
 			q_orig.normalize(); 
 			
 			// Stuff the new rotation back into the pose. This requires conversion into a msg type
-			poseMsg.header.frame_id = baseFrameId;
+			poseMsg.header.frame_id = base_frame_id;
 			poseMsg.pose.position.x = pose.Pos[0];
 			poseMsg.pose.position.y = pose.Pos[1];
 			poseMsg.pose.position.z = pose.Pos[2];
 			tf2::convert(q_orig, poseMsg.pose.orientation);
 
-			transform.header.frame_id = baseFrameId;
+			transform.header.frame_id = base_frame_id;
 			transform.child_frame_id = name;
 			transform.transform.translation.x = pose.Pos[0];
 			transform.transform.translation.y = pose.Pos[1];
@@ -136,9 +139,16 @@ int main(int argc, char** argv)
 				br.sendTransform(transform);
 			}
 		}
+		try{
+    		vive_transform = tf_buffer.lookupTransform(base_frame_id, "T20_t1", static_transformStamped.header.stamp);
+			vive_transform.header.frame_id = "base_link";
+			vive_transform.child_frame_id = vive_frame_id;
+			br.sendTransform(vive_transform);
+  		} catch (tf2::TransformException &ex) {
+    		ROS_WARN("Could NOT transform: %s", ex.what());
+  		}
 
 		ros::spinOnce();
-		pub_rate.sleep();
 
 	}
 

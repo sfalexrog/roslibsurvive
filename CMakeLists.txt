@@ -138,6 +138,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/roslibsurvive_node.cpp)
 add_executable(${PROJECT_NAME}_frame_publisher src/vive_frame_publisher.cpp)
+add_executable(${PROJECT_NAME}_vpe src/vive_vpe.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -160,6 +161,12 @@ target_link_libraries(${PROJECT_NAME}_frame_publisher PUBLIC
   ${catkin_LIBRARIES}
   )
 
+target_link_libraries(${PROJECT_NAME}_vpe PUBLIC
+  survive
+  ${PLUGINS}
+  ${catkin_LIBRARIES}
+  )
+
 # libsurvive does not expose its includes, so we have to resort to dirty hacks
 
 target_include_directories(${PROJECT_NAME}_frame_publisher PUBLIC
@@ -168,6 +175,16 @@ target_include_directories(${PROJECT_NAME}_frame_publisher PUBLIC
   )
 
 target_compile_features(${PROJECT_NAME}_frame_publisher PUBLIC
+  cxx_auto_type
+  cxx_lambdas
+  )
+
+target_include_directories(${PROJECT_NAME}_vpe PUBLIC
+  vendor/libsurvive/include
+  vendor/libsurvive/redist
+  )
+
+target_compile_features(${PROJECT_NAME}_vpe PUBLIC
   cxx_auto_type
   cxx_lambdas
   )
@@ -198,6 +215,12 @@ install(TARGETS ${PLUGINS} ${PROJECT_NAME}_frame_publisher
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   )
+
+install(TARGETS ${PLUGINS} ${PROJECT_NAME}_vpe
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ## Mark cpp header files for installation
 # install(DIRECTORY include/${PROJECT_NAME}/
