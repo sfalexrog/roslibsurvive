@@ -4,6 +4,8 @@
     <arg name="gcs_bridge" default="tcp"/>
     <arg name="viz" default="true"/>
     <arg name="respawn" default="true"/>
+    <arg name="use_tf" default="false"/>
+    <arg name="use_pose" default="true"/>
 
     <node pkg="mavros" type="mavros_node" name="mavros" required="false" clear_params="true" respawn="$(arg respawn)" unless="$(eval fcu_conn == 'none')" respawn_delay="1" output="screen">
         <!-- UART connection -->
@@ -23,6 +25,8 @@
         <param name="gcs_url" value="" if="$(eval not gcs_bridge)"/>
         <param name="gcs_quiet_mode" value="true"/>
         <param name="conn/timeout" value="8"/>
+        <param name="mocap/use_tf" value="$(arg use_tf)"/>
+        <param name="mocap/use_pose" value="$(arg use_pose)"/>
 
         <!-- basic params -->
         <rosparam command="load" file="$(find clever)/launch/mavros_config.yaml"/>

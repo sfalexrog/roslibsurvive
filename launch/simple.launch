@@ -1,13 +1,10 @@
 <launch>
-    <arg name="mavros" default="true"/>
+    <arg name="mavros" default="false"/>
     <arg name="vpe_publisher" default="false"/>
     <arg name="simple_offboard" default="false"/>
 
-    <arg name="vive_base_frame_id" default="vive_map"/>
-    <arg name="tracker_yaw_base" default="0.0"/>
-    <arg name="tracker_pitch_base" default="0.0"/>
-    <arg name="tracker_roll_base" default="0.0"/>
-    <arg name="tracker_yaw_axes" default="0.0"/>
+    <arg name="vive_base_frame_id" default="map"/>
+    <arg name="tracker_yaw_axes" default="1.5707963"/>
     <arg name="tracker_pitch_axes" default="0.0"/>
     <arg name="tracker_roll_axes" default="0.0"/>
     <arg name="static_yaw" default="-1.5707963"/>
@@ -21,19 +18,20 @@
         <arg name="gcs_bridge" default="tcp"/>
         <arg name="viz" default="false"/>
         <arg name="respawn" default="true"/>
+        <arg name="use_tf" default="false"/>
+        <arg name="use_pose" default="true"/>
     </include>
 
     <node name="frame_publisher" pkg="roslibsurvive" type="roslibsurvive_frame_publisher">
         <param name="base_frame_id" value="$(arg vive_base_frame_id)"/>
-        <param name="yaw" value="$(arg tracker_yaw_base)"/>
-        <param name="pitch" value="$(arg tracker_pitch_base)"/>
-        <param name="roll" value="$(arg tracker_roll_base)"/>
-        <param name="yaw2" value="$(arg tracker_yaw_axes)"/>
-        <param name="pitch2" value="$(arg tracker_pitch_axes)"/>
-        <param name="roll2" value="$(arg tracker_roll_axes)"/>        
+        <param name="yaw" value="$(arg tracker_yaw_axes)"/>
+        <param name="pitch" value="$(arg tracker_pitch_axes)"/>
+        <param name="roll" value="$(arg tracker_roll_axes)"/>        
         <param name="yaw_static" value="$(arg static_yaw)"/>
         <param name="pitch_static" value="$(arg static_pitch)"/>
-        <param name="roll_static" value="$(arg static_roll)"/>        
+        <param name="roll_static" value="$(arg static_roll)"/>   
+        <!--<remap from="~T20_pose_t1" to="/mavros/vision_pose/pose"/>--> 
+        <!--<remap from="~T20_pose_t2" to="/mavros/mocap/pose"/>-->      
     </node>
 
     <!-- Static transform for vive tracker -->
