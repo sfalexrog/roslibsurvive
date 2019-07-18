@@ -1,12 +1,8 @@
 <launch>
     <arg name="mavros" default="false"/>
-    <arg name="vpe_publisher" default="false"/>
     <arg name="simple_offboard" default="false"/>
 
     <arg name="vive_base_frame_id" default="map"/>
-    <arg name="tracker_yaw_axes" default="1.5707963"/>
-    <arg name="tracker_pitch_axes" default="0.0"/>
-    <arg name="tracker_roll_axes" default="0.0"/>
     <arg name="static_yaw" default="-1.5707963"/>
     <arg name="static_pitch" default="0.0"/>
     <arg name="static_roll" default="3.1415926"/>
@@ -18,41 +14,26 @@
         <arg name="gcs_bridge" default="tcp"/>
         <arg name="viz" default="false"/>
         <arg name="respawn" default="true"/>
-        <arg name="use_tf" default="false"/>
-        <arg name="use_pose" default="true"/>
     </include>
-
+    
+    <!-- vive tracker pose sender -->
     <node name="frame_publisher" pkg="roslibsurvive" type="roslibsurvive_frame_publisher">
-        <param name="base_frame_id" value="$(arg vive_base_frame_id)"/>
-        <param name="yaw" value="$(arg tracker_yaw_axes)"/>
-        <param name="pitch" value="$(arg tracker_pitch_axes)"/>
-        <param name="roll" value="$(arg tracker_roll_axes)"/>        
+        <param name="base_frame_id" value="$(arg vive_base_frame_id)"/>       
         <param name="yaw_static" value="$(arg static_yaw)"/>
         <param name="pitch_static" value="$(arg static_pitch)"/>
         <param name="roll_static" value="$(arg static_roll)"/>   
-        <!--<remap from="~T20_pose_t1" to="/mavros/vision_pose/pose"/>--> 
-        <!--<remap from="~T20_pose_t2" to="/mavros/mocap/pose"/>-->      
+        <remap from="~T20_pose_t1" to="/mavros/vision_pose/pose"/>      
     </node>
 
-    <!-- Static transform for vive tracker -->
-    <!-- Change T20 to actual tracker name -->
-    <!-- static_transform_publisher arguments: x y z yaw pitch roll frame_id child_frame_id -->
-    <!-- 3.1415926 1.5707963-->
-    <node pkg="tf2_ros" type="static_transform_publisher" name="vive_frame" args="0.0 0.0 0.0 1.5707963 3.1415926 0.0 T20 T20_body"/>
-
+    <!-- simple offboard for copter control -->
     <node name="simple_offboard" pkg="clever" type="simple_offboard" output="screen" clear_params="true" if="$(arg simple_offboard)">
         <param name="reference_frames/body" value="map"/>
         <param name="reference_frames/base_link" value="map"/>
     </node>
 
-    <node name="vpe_publisher" pkg="clever" type="vpe_publisher" clear_params="true" if="$(arg vpe_publisher)">
-        <!-- Change this to actual topic name -->
-        <remap from="~pose" to="T20_pose"/>
-        <remap from="~vpe" to="mavros/vision_pose/pose"/>
-        <!--  -->
-        <param name="offset_frame_id" value="vive_map"/>
-        <param name="frame_id" value="T20_body"/>
-        <param name="publish_zero" value="false"/>
+    <!-- Auxiliary frames -->
+    <node name="frames" pkg="clever" type="frames" output="screen">
+        <param name="body/frame_id" value="body"/>
     </node>
 
 </launch>
