@@ -118,30 +118,6 @@ int main(int argc, char** argv)
 				} catch (tf2::TransformException &ex) {
     				ROS_WARN("Could NOT transform: %s", ex.what());
   				}
-
-				//vive_transform = tf_buffer.lookupTransform(base_frame_id, "T20_t1", static_transformStamped.header.stamp, ros::Duration(0.02));				
-
-				/*
-				q_rot.setRPY(roll, pitch, yaw);
-				q_new = q_rot*q_static;
-				q_new.normalize();
-
-				transform.header.frame_id = "T20_t1";
-				transform.child_frame_id = "T20_t2";
-				transform.transform.translation.x = 0;
-				transform.transform.translation.y = 0;
-				transform.transform.translation.z = 0;
-				tf2::convert(q_new, transform.transform.rotation);
-				br.sendTransform(transform);
-
-				poseMsg.header.frame_id = "T20_t2";
-				poseMsg.pose.position.x = 0;
-				poseMsg.pose.position.y = 0;
-				poseMsg.pose.position.z = 0;
-				q_static.setRPY(0, 0, 0);
-				tf2::convert(q_static, poseMsg.pose.orientation);
-				T20_t2.publish(poseMsg);
-				*/
 			}
 		}
 		ros::spinOnce();
