@@ -37,7 +37,7 @@ git submodule update --init
 Copy udev rules:
 
 ```bash
-cp vendor/roslibsurvive/useful_files/81-vive.rules /etc/udev/rules.d/
+cp vendor/libsurvive/useful_files/81-vive.rules /etc/udev/rules.d/
 ```
 
 Build ROS packages (on memory constrained platforms you might be going to need to use `-j1` key):
