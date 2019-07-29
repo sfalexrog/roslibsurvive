@@ -40,7 +40,7 @@ catkin_make -j1
 Enable systemd service `roscore` (if not running):
 
 ```bash
-sudo systemctl enable /home/<username>/catkin_ws/src/clever/deploy/roscore.service
+sudo systemctl enable /home/pi/catkin_ws/src/clever/deploy/roscore.service
 sudo systemctl start roscore
 ```
 
