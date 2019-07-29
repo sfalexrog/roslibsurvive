@@ -25,7 +25,19 @@ Clone this git repository to separate catkin workspace:
 mkdir -p ros_catkin_ws/src
 cd ~/ros_catkin_ws/src
 git clone https://github.com/sfalexrog/roslibsurvive.git
+```
 
+Init libsurvive submodule:
+
+```bash
+cd roslibsurvive
+git submodule update --init
+```
+
+Copy udev rules:
+
+```bash
+cp vendor/roslibsurvive/useful_files/81-vive.rules /etc/udev/rules.d/
 ```
 
 Build ROS packages (on memory constrained platforms you might be going to need to use `-j1` key):
