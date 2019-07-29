@@ -70,8 +70,8 @@ roslaunch roslibsurvive direct.launch
 ```
 
 Main parameters for the roslibsurvive_frame_publisher are:
-vive_base_frame_id - pose and frame header id;
-static_yaw, static_pitch, static_roll - rotation of Vive Tracker relative to flight controller board.
+* vive_base_frame_id - pose and frame header id;
+* static_yaw, static_pitch, static_roll - rotation of Vive Tracker relative to flight controller board.
 
 The result pose and frame are published as "~T20_pose_t1" and "T20_t1" respectively.
 
