@@ -2,9 +2,10 @@
 
 ROS wrapper of [libsurvive](https://github.com/cnlohr/libsurvive) for getting position from HTC Vive Tracker.
 
-![Vive Positioning Test](https://media.giphy.com/media/cNSjPppcxRqnfpeYkM/giphy.gif)
+![Vive Positioning Test](https://i.giphy.com/media/cNSjPppcxRqnfpeYkM/giphy.gif)
 
 [Positioning Test (YouTube video)](https://youtu.be/a5dJ0t4Btc4)
+
 [Offboard Flight Test (YouTube video)](https://youtu.be/_Jx_HtfYyl8)
 
 ## Manual installation
