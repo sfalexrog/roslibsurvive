@@ -2,7 +2,8 @@
 
 ROS wrapper of [libsurvive](https://github.com/cnlohr/libsurvive) for getting position from HTC Vive Tracker.
 
-![Vive Positioning Test](https://i.giphy.com/media/cNSjPppcxRqnfpeYkM/giphy.gif)
+<img src="vive-tracker-positioning-test.gif" width="300px" alt="CLEVER drone">
+
 
 [Positioning Test (YouTube video)](https://youtu.be/a5dJ0t4Btc4)
 
