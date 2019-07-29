@@ -12,7 +12,7 @@
 
 
 std::string base_frame_id;
-double yaw, pitch, roll, yaw2, pitch2, roll2, yaw_static, pitch_static, roll_static;
+double yaw_static, pitch_static, roll_static;
 
 int main(int argc, char** argv)
 {
@@ -21,13 +21,9 @@ int main(int argc, char** argv)
 
 	ros::NodeHandle nh("~");
 	nh.param<std::string>("base_frame_id", base_frame_id, "map");
-	nh.param<double>("yaw", yaw, 0.0);
-	nh.param<double>("pitch", pitch, 0.0);
-	nh.param<double>("roll", roll, 0.0);
 	nh.param<double>("yaw_static", yaw_static, 0.0);
 	nh.param<double>("pitch_static", pitch_static, 0.0);
 	nh.param<double>("roll_static", roll_static, 0.0);
-	//ROS_INFO("Got angles: %g, %g, %g", yaw, pitch, roll);
 	std::unordered_map<std::string, ros::Publisher> pubTopics;
 
 	tf2_ros::TransformBroadcaster br;
@@ -37,13 +33,10 @@ int main(int argc, char** argv)
 	tf2_ros::Buffer tf_buffer;
     tf2_ros::TransformListener tf_Listener(tf_buffer);
 
-	//std::string base_frame_id = "base_link"; // TODO: pass base frame ID as a parameter
-
 	survive_simple_start_thread(ctx);
 
-    tf2::Quaternion q_orig, q_rot, q_rot2, q_new, q_static;
+    tf2::Quaternion q_orig, q_static;
 	ros::Publisher T20_t1 = nh.advertise<geometry_msgs::PoseStamped>("T20_pose_t1", 1);
-	ros::Publisher T20_t2 = nh.advertise<geometry_msgs::PoseStamped>("T20_pose_t2", 1);
 	geometry_msgs::TransformStamped transform, vive_transform;
 	ros::Rate pub_rate(30);
 
