@@ -11,7 +11,7 @@ ROS wrapper of [libsurvive](https://github.com/cnlohr/libsurvive) for getting po
 
 ## Manual installation
 
-Install [clever](https://github.com/copterexpress/clever) package for copter control if needed, or [download](https://github.com/CopterExpress/clever/releases/latest) image for Raspberry Pi
+[Download](https://github.com/CopterExpress/clever/releases/tag/v0.17) image for Raspberry Pi (required version 0.17)
 
 Install dependencies needed for libsurvive:
 
